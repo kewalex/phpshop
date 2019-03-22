@@ -1,13 +1,11 @@
 <?php
 
+session_start();
+
 require_once 'db/db.php';
 
 $category=$connect->query("SELECT * FROM category");
 $category=$category->fetchAll(PDO::FETCH_ASSOC);
-
-//echo "<pre>";
-//var_dump($category);
-//echo "</pre>";
 
 ?>
 
@@ -27,9 +25,9 @@ $category=$category->fetchAll(PDO::FETCH_ASSOC);
     <ul>
         <li><a href="index.php">Главная</a></li>
         <? foreach ($category as $cat)   {     ?>
-        <li><a href="index.php?cat=<? echo $cat['name']?>"><? echo $cat['name']?></a></li>
+        <li><a href="index.php?category=<? echo $cat['name']?>"><? echo $cat['name']?></a></li>
         <? } ?>
-        <li><a href="cart.php">Корзина (Товаров: 15 на сумму 9955 руб)</a></li>
+        <li><a href="cart.php">Корзина (Товаров: <? echo $_SESSION['totalQuantity']?> на сумму <? echo $_SESSION['totalPrice']?> руб)</a></li>
     </ul>
 </nav>
 <hr>
