@@ -2,36 +2,44 @@
 
 require_once '/parts/header.php';
 
-//session_destroy(); //удаляем сессию
-
 if (isset ($_GET['category'])) {
     $currentCat=$_GET['category'];
-    $phone=$connect->query("SELECT * FROM phone WHERE category='$currentCat'");
-    $phone=$phone->fetchAll(PDO::FETCH_ASSOC);
+    $phone=$connect->query("SELECT * FROM phone WHERE category='$currentCat'") //запрос в БД (query) и выгрузка массива в переменную (phone)
+    ->fetchAll(PDO::FETCH_ASSOC); //перевод массива в удобочитаемый вид (fetchAll)
+
+    if (!$phone) {
+        die("Такой категории не существует!"); // Эквивалент функции exit - прекращает выполнение скрипта
+    }
 } else {
-    $phone=$connect->query("SELECT * FROM phone");
-    $phone=$phone->fetchAll(PDO::FETCH_ASSOC);
+    $phone=$connect->query("SELECT * FROM phone")
+    ->fetchAll(PDO::FETCH_ASSOC);
 }
 
 ?>
 
-    <div class="main">
+<div class="main">
 
-    <? foreach ($phone as $model) { ?>
+<?
 
-    <div class="card">
-            <a href="product.php?product=<? echo $model['model'] ?>">
-                <img src="img/<? echo $model['img']?>" alt="<? echo $model['model']?>">
-            </a>
-            <div class="label"><? echo $model['model']?> (<? echo $model['price']?>)</div>
-        <form action="actions/add.php" method="post">
-            <input type="hidden" name="id" value="<? echo $model['id']?>">
-            <input type="submit" value="Добавить в корзину">
+foreach ($phone as $product) {
 
-        </form>
-        </div>
-    <? } ?>
-    </div>
+?>
+
+<div class="card">
+    <a href="product.php?product=<? echo $product['model'] ?>">
+        <img src="img/<? echo $product['img']?>" alt="<? echo $product['model']?>">
+    </a>
+    <div class="label"><? echo $product['model']?> (<? echo $product['price']?>)</div>
+    <? require 'parts/addToCart.php'?>
+</div>
+
+<?
+
+}
+
+?>
+
+</div>
 
 
 </body>
